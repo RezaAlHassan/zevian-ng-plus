@@ -1,0 +1,13 @@
+employee_name,employee_id,role,period,resolution_rate,quality_rate,response_minutes,resolved_tickets,assigned_tickets,billing_cases,qa_rework_count
+A. Morgan,NS-104,Tier 2 Support,2026-08-11,87,91,38,46,53,11,1
+A. Morgan,NS-104,Tier 2 Support,2026-08-18,86,90,40,45,52,12,1
+A. Morgan,NS-104,Tier 2 Support,2026-08-25,84,88,43,43,51,13,2
+A. Morgan,NS-104,Tier 2 Support,2026-09-01,81,85,47,41,51,15,3
+A. Morgan,NS-104,Tier 2 Support,2026-09-08,76,82,51,39,51,17,4
+A. Morgan,NS-104,Tier 2 Support,2026-09-15,72,80,55,37,51,18,5
+Samir Khan,NS-117,Tier 1 Support,2026-08-18,84,78,42,42,50,7,3
+Samir Khan,NS-117,Tier 1 Support,2026-08-25,85,85,40,43,51,7,2
+Samir Khan,NS-117,Tier 1 Support,2026-09-01,87,89,37,45,52,6,1
+Jordan Lee,NS-123,Customer Success,2026-09-01,88,90,31,35,40,4,1
+Jordan Lee,NS-123,Customer Success,2026-09-08,86,89,33,34,40,5,1
+Jordan Lee,NS-123,Customer Success,2026-09-15,84,88,34,33,39,5,2
