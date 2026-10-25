@@ -210,19 +210,31 @@ if(v4Preview&&new URLSearchParams(location.search).has('drawer-variant')){
   closeFindingDrawer(false);const variant=new URLSearchParams(location.search).get('drawer-variant');const p=reviewFigmaExample(variant);
   state.patterns=[p];patternsScreen();const view=reviewView(p.id);view.cause=view.context=view.records=variant!=='collapsed';openFindingDrawer(p.id);
 }else {
+  document.body.classList.add('findings-only');
   patternsScreen=function(){
-    if(v4NeedsNameReview())return;
     findingDesignEnsureSample();
     render(v4Header('Review Findings','Review changes Zevian flagged, add what needs follow-up.','')+'<div class="finding-scroll"><table class="findings-table design-findings-table"><thead><tr><th>Finding</th><th>Next step</th><th>Updated</th></tr></thead><tbody>'+state.patterns.map(p=>{
       const reviewed=isReviewed(p),m=findingDesignModel(p),label=p.findingDesign?({'design-campaign':'Positive replies, fewer meetings','design-individual':'SDR performance and unequal allocation','design-pipeline':'More meetings, fewer opportunities'}[p.id]):m.title;
       const sub=p.findingDesign?(p.id==='design-individual'?'Lead allocation records are also missing':'Employee replied: meetings are being booked further ahead'):p.contexts.length?'Context added':v4FindingValue(p.signal,p.signal.baseline)+' → '+v4FindingValue(p.signal,p.signal.value);
       return '<tr class="finding-row '+(!p.readAt?'design-attention':'')+'" id="finding-'+p.id+'" data-read="'+!!p.readAt+'" data-action="drawer:'+p.id+'" tabindex="0" aria-label="'+(p.readAt?'Read':'Unread')+' finding: '+esc(m.title)+'"><td><span class="finding-label">'+esc(label)+'</span><span class="finding-sub">'+esc(sub)+'</span></td><td><button class="finding-badge '+(reviewed||p.readAt?'neutral':'')+'" data-action="drawer:'+p.id+'">'+(reviewed?'Reviewed':'Review finding')+'</button></td><td>'+esc(p.findingDesign?(p.id==='design-campaign'?'10:54':'Yesterday'):formatDate(p.decisionDate||p.period))+'</td></tr>';
-    }).join('')+'</tbody></table>'+(!state.patterns.length?'<p class="muted">No findings available. Add earlier periods to compare performance.</p>':'')+'</div><div class="flow-footer">'+button('Go back','mapping')+button('Continue →','decisions',true)+'</div>','patterns',2);
+    }).join('')+'</tbody></table>'+(!state.patterns.length?'<p class="muted">No findings available.</p>':'')+'</div><div class="flow-footer findings-footer">'+button('Continue →','decisions',true)+'</div>','patterns',2);
   };
-  actions.patterns=patternsScreen;
+  // Temporarily bypass data entry. Keep the import code available for a later release.
+  uploadScreen=mappingScreen=weeklyReviewScreen=patternsScreen;
+  Object.assign(actions,{patterns:patternsScreen,resume:patternsScreen,upload:patternsScreen,mapping:patternsScreen,sample:patternsScreen,manual:patternsScreen,choose:patternsScreen,detect:patternsScreen});
+  $('overviewNav').onclick=$('reviewNav').onclick=$('uploadNav').onclick=patternsScreen;
   if(v4Preview&&!['upload','match'].includes(new URLSearchParams(location.search).get('screen'))){
     const screen=new URLSearchParams(location.search).get('screen');closeFindingDrawer(false);state.patterns=findingDesignExamples();patternsScreen();
     if(['drawer','context'].includes(screen)){const params=new URLSearchParams(location.search),p=state.patterns.find(p=>p.id==='design-'+params.get('finding'))||state.patterns[0];reviewView(p.id).tab=Math.min(p.findingDesign.tabs.length-1,Math.max(0,Number(params.get('tab'))||0));openFindingDrawer(p.id);}
-  }else if($('findingDrawer'))openFindingDrawer(selected.id);
-  else if(mode==='patterns')patternsScreen();
+  }else {
+    closeFindingDrawer(false);
+    const examples=findingDesignExamples(),current=state.patterns;
+    // Keep decisions, context and read status only for the current prototype models.
+    state={upload:{id:'findings-prototype',file:'Prototype examples',sample:true,mappingStatus:'confirmed',period:'2026-10-07',demoVersion:2},columns:[],rows:[],mapping:[],records:[],history:state.upload?.id==='findings-prototype'?state.history:[],patterns:examples.map(example=>{
+      const previous=current.find(p=>p.id===example.id&&p.findingDesign);
+      if(!previous)return example;
+      return {...example,readAt:previous.readAt,contexts:previous.contexts||[],contextRequest:previous.contextRequest,investigationDecision:previous.investigationDecision,diagnosis:previous.diagnosis,status:previous.status,decisionDate:previous.decisionDate};
+    })};
+    persist();patternsScreen();
+  }
 }

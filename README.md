@@ -2,6 +2,8 @@
 
 The main page is [outputs/zevian-manager-workflow.html](outputs/zevian-manager-workflow.html). Future prototype changes belong in this HTML file and its linked files under `outputs/assets/`.
 
+The current prototype opens straight to three findings, with two unread and one read on a fresh visit. Upload and column matching are temporarily hidden and bypassed. Each finding has its own evidence tabs. The prototype saves its read status, context and decisions under `zevian_findings_prototype_v1`; earlier imported reviews remain in their old storage key and cannot replace the current examples. The import code is retained for future use.
+
 ## Deploy on Netlify
 
 Import `RezaAlHassan/zevian-ng-plus` from GitHub into Netlify:

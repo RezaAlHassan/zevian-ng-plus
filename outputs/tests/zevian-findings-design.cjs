@@ -9,8 +9,25 @@ const base=process.env.ZEVIAN_TEST_URL||pathToFileURL(path.resolve(__dirname,'..
  try{
   const page=await browser.newPage({viewport:{width:1440,height:1014}}),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
+  await page.addInitScript(()=>{
+   localStorage.setItem('zevian_diagnosis_v1',JSON.stringify({upload:{investigationExamples:true,mappingStatus:'confirmed'},patterns:[{id:'old-investigation',title:'Old example'}],history:[]}));
+  });
   // Check the normal saved sample flow, without design-preview parameters.
   await page.goto(base);
+  assert.deepEqual(await page.locator('.finding-label').allTextContents(),['Positive replies, fewer meetings','SDR performance and unequal allocation','More meetings, fewer opportunities']);
+  assert.equal(await page.locator('.finding-row[data-read="false"]').count(),2);
+  assert.equal(await page.locator('.finding-row[data-read="true"]').count(),1);
+  assert.equal(await page.locator('#file, #dropzone, .match-options').count(),0);
+  assert(!(await page.locator('#steps').isVisible()));
+  assert(!(await page.locator('#uploadNav').isVisible()));
+  assert.equal(await page.getByRole('button',{name:'Go back',exact:true}).count(),0);
+  await page.getByRole('button',{name:'Review',exact:true}).click();
+  assert.equal(await page.locator('.finding-row').count(),3);
+  // An earlier saved investigation set in the prototype slot also gets upgraded.
+  await page.evaluate(()=>{state={upload:{investigationExamples:true,mappingStatus:'confirmed',period:'2026-10-07'},columns:[],rows:[],mapping:[],records:[],patterns:investigationExamples(),history:[]};persist();});
+  await page.reload();
+  assert.equal(await page.locator('#finding-design-campaign').count(),1);
+  assert.equal(await page.locator('.finding-row').count(),3);
   await page.evaluate(()=>{
    state={upload:{id:'sample-test',sample:true,file:'sample-sdr-performance.csv',period:'2026-09-15',mappingStatus:'confirmed'},columns:[],rows:[],mapping:[],records:[],history:[],patterns:investigationExamples()};
    persist();actions.patterns();
