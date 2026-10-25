@@ -1,0 +1,5 @@
+[build]
+  publish = "outputs"
+
+# This is a static prototype. No build command or generated HTML copy is needed.
+# The homepage rewrite is in outputs/_redirects, which also supports manual deploys.
