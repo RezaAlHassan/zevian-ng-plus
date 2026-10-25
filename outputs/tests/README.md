@@ -1,5 +1,19 @@
 # Zevian v4 verification
 
+The normal sample review now uses the same three designed findings as the preview. Existing saved sample reviews switch to these findings when opened. The initial state is two unread and one read; opening a drawer marks that finding read and saves it across reloads. Read status is separate from optional decisions. The current browser check covers the normal sample route, its distinct tabs and content, and saved read status as well as the previews.
+
+The default findings and drawer now follow Figma nodes `4321:6757`, `4321:6857`, `4321:10320`, `4325:7042`, `4326:8964`, `4326:9166`, `4330:9399`, and `4332:5809`. Run `node outputs/tests/zevian-findings-design.cjs` with `playwright-core` available through `NODE_PATH`. It checks all seven evidence tabs, badge typography, local assets, drawer width, keyboard tabs, decisions, and mobile overflow. Preview with `?design-preview=1&screen=findings` or `?design-preview=1&screen=drawer&finding=campaign` (`individual` and `pipeline` are also available; `tab=1` selects the second tab). Figma sample values and messages stay in preview mode. Uploaded findings use their own metrics and source records. Investigate opens context and records; Record decision opens the optional review actions. The older explicit `drawer-variant` previews remain available for historical checks.
+
+The current drawer follows the October 2026 Figma update. Run `node outputs/tests/zevian-interactions.cjs` for its behavior and visual fixtures. Shared rules and source links are in [INTERACTIONS.md](../INTERACTIONS.md). This replaces the earlier summary/evidence drawer layout described below; `zevian-drawer.cjs` and `zevian-v4.cjs` remain historical layout checks. Current desktop width is 675 px, with an expand control and full mobile width. Request sent is disabled. Decisions are optional Mark reviewed / Dismiss actions.
+
+Use `?design-preview=1&screen=drawer&drawer-variant=collapsed`, `details`, `context`, or `messages` for the four supplied Figma states. The current test creates `zevian-review-*-qa.png` screenshots and verifies context, requests, reports, focus, local assets, mobile layout, reduced motion and persistence. Imported findings use the same drawer; fixture messages are only used in design-preview mode.
+
+Run `node outputs/tests/zevian-drawer.cjs` with Playwright available through `NODE_PATH` to check the current investigation drawer. It covers all three examples, evidence navigation, optional decisions, context changes, reload persistence, focus return, and desktop/mobile geometry. It can run directly against the HTML file, or use `ZEVIAN_TEST_URL` for a local HTTP preview. The older `zevian-v4.cjs` targets the earlier drawer and is kept as a historical check.
+
+Open **Uploads → Sample data and file guidance → Try investigation examples** to load the three static examples. They also appear under `?design-preview=1&screen=findings` or `screen=drawer`. Example data uses local state; the design preview does not write local storage. The current drawer keeps the requested 65% desktop width and full mobile width.
+
+`assets/zevian-investigation.js` supplies the shared finding model, grouped bars, before/after comparison, trend, timeline, observations, evidence view, and optional decisions. Uploaded findings use the same views without inventing process changes or message examples. Manager context uses the existing local rules, not an LLM. Unsupported notes produce no new investigation observation.
+
 Start a local server from the repository root:
 
 ```powershell
